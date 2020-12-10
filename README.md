@@ -24,33 +24,38 @@ main();
 ```
 
 <details>
-<summary>View output (partial)</summary>
+<summary>View partial output</summary>
 
-```json
+```js
 [
   {
-    "type": "store",
-    "name": "Mail",
-    "appUserModelId": "microsoft.windowscommunicationsapps_8wekyb3d8bbwe!microsoft.windowslive.mail",
-    "packagePath": "C:\\Program Files\\WindowsApps\\microsoft.windowscommunicationsapps_16005.13228.41011.0_x64__8wekyb3d8bbwe",
-    "packageImages": {
-      "backgroundColor": "#0078D7",
-      "icon": {
-        "default": "C:\\Program Files\\WindowsApps\\microsoft.windowscommunicationsapps_16005.13228.41011.0_x64__8wekyb3d8bbwe\\images\\HxMailAppList.scale-400.png"
+    type: 'store',
+    name: 'Mail',
+    appUserModelId:
+      'microsoft.windowscommunicationsapps_8wekyb3d8bbwe!microsoft.windowslive.mail',
+    packagePath:
+      'C:\\Program Files\\WindowsApps\\microsoft.windowscommunicationsapps_16005.13228.41011.0_x64__8wekyb3d8bbwe',
+    packageImages: {
+      backgroundColor: '#0078D7',
+      icon: {
+        default:
+          'C:\\Program Files\\WindowsApps\\microsoft.windowscommunicationsapps_16005.13228.41011.0_x64__8wekyb3d8bbwe\\images\\HxMailAppList.scale-400.png',
       },
-      "tile": {
-        "default": "C:\\Program Files\\WindowsApps\\microsoft.windowscommunicationsapps_16005.13228.41011.0_x64__8wekyb3d8bbwe\\images\\HxMailMediumTile.scale-400.png"
-      }
-    }
+      tile: {
+        default:
+          'C:\\Program Files\\WindowsApps\\microsoft.windowscommunicationsapps_16005.13228.41011.0_x64__8wekyb3d8bbwe\\images\\HxMailMediumTile.scale-400.png',
+      },
+    },
   },
   {
-    "type": "classic",
-    "name": "Word",
-    "appUserModelId": "Microsoft.Office.WINWORD.EXE.15",
-    "targetPath": "C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE"
-  }
-  // more apps...
-]
+    type: 'classic',
+    name: 'Word',
+    appUserModelId: 'Microsoft.Office.WINWORD.EXE.15',
+    targetPath:
+      'C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE',
+  },
+  // ...more apps...
+];
 ```
 
 </details>
