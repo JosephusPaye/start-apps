@@ -1,6 +1,6 @@
 {
   "name": "@josephuspaye/start-apps",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Get a list of apps in the Start Menu, with details.",
   "main": "dist/main.js",
   "repository": "https://github.com/JosephusPaye/start-apps.git",
