@@ -1,11 +1,17 @@
 {
   "name": "@josephuspaye/start-apps",
   "version": "0.0.0",
-  "description": "Get a list of apps in the Start Menu, with icons",
+  "description": "Get a list of apps in the Start Menu, with details.",
   "main": "dist/main.js",
   "repository": "https://github.com/JosephusPaye/start-apps.git",
   "author": "Josephus Paye II",
   "license": "MIT",
+  "os": [
+    "win32"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
   "publishConfig": {
     "access": "public"
   },
