@@ -1,6 +1,8 @@
 # start-apps
 
-Get a list of apps in the Start Menu, with details. Supports classic (desktop) and store (UWP) apps. Store apps have their icons included.
+Get a list of apps in the Start Menu, with details. Supports classic (desktop) and store (UWP) apps. For store apps, the paths to their icons are included.
+
+This project is part of [#CreateWeekly](https://twitter.com/JosephusPaye/status/1214853295023411200), my attempt to create something new publicly every week in 2020.
 
 ## Installation
 
@@ -8,7 +10,7 @@ Get a list of apps in the Start Menu, with details. Supports classic (desktop) a
 npm install -g @josephuspaye/start-apps
 ```
 
-## Usage
+## Example
 
 The following program gets all the apps in the Start Menu and dumps the list in JSON format:
 
@@ -49,10 +51,12 @@ main();
   },
   {
     type: 'classic',
-    name: 'Word',
-    appUserModelId: 'Microsoft.Office.WINWORD.EXE.15',
-    targetPath:
-      'C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE',
+    name: 'Zoom',
+    appUserModelId: 'zoom.us.Zoom Video Meetings',
+    targetPath: 'C:\\Users\\jpaye\\AppData\\Roaming\\Zoom\\bin\\Zoom.exe',
+    targetArguments: '',
+    startMenuLink:
+      'C:\\Users\\jpaye\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Zoom\\Zoom.lnk',
   },
   // ...more apps...
 ];
@@ -68,6 +72,8 @@ interface ClassicApp {
   name: string;
   appUserModelId: string;
   targetPath: string;
+  targetArguments: string;
+  startMenuLink?: string;
 }
 
 interface Image {
