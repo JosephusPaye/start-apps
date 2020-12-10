@@ -23,7 +23,7 @@
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"*.{js,json,md}\"",
     "format:check": "prettier --list-different \"src/**/*.ts\" \"*.{js,json,md}\"",
-    "test": "echo na"
+    "test": "echo nah"
   },
   "dependencies": {
     "fast-xml-parser": "^3.17.5"
