@@ -9,11 +9,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "bin": {
-    "lookup": "dist/main.js"
-  },
   "files": [
-    "dist"
+    "dist",
+    "bin"
   ],
   "scripts": {
     "build": "tsc",
@@ -21,7 +19,9 @@
     "format:check": "prettier --list-different \"src/**/*.ts\" \"*.{js,json,md}\"",
     "test": "echo na"
   },
-  "dependencies": {},
+  "dependencies": {
+    "fast-xml-parser": "^3.17.5"
+  },
   "devDependencies": {
     "@types/node": "^14.14.10",
     "prettier": "^2.1.2",

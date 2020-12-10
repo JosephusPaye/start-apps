@@ -1,4 +1,4 @@
-﻿using Microsoft.WindowsAPICodePack.Shell;
+using Microsoft.WindowsAPICodePack.Shell;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
@@ -11,7 +11,6 @@ namespace StartAppsCore
         public string AppUserModelID { get; set; }
         public string TargetParsingPath { get; set; }
         public string PackageInstallPath { get; set; }
-        public string DisplayName { get; set; }
     }
 
     class Program
@@ -33,7 +32,6 @@ namespace StartAppsCore
                 app.TargetParsingPath = appObject.Properties.System.Link.TargetParsingPath.Value;
                 app.PackageInstallPath = (string)appObject.Properties.GetProperty("System.AppUserModel.PackageInstallPath")
                     .ValueAsObject;
-                app.DisplayName = appObject.GetDisplayName(DisplayNameType.RelativeToParent);
 
                 apps.Add(app);
             }
