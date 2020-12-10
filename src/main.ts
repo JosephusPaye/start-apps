@@ -3,12 +3,19 @@ import path from 'path';
 import { execFile } from 'child_process';
 import { parse } from 'fast-xml-parser';
 
-import { array, readDir } from './support';
+import {
+  array,
+  readDir,
+  readDirRecursive,
+  readLinks,
+  resolvePath,
+} from './support';
 
 interface StartApp {
   Name: string;
   AppUserModelID: string;
   TargetParsingPath: string | null;
+  TargetArguments: string | null;
   PackageInstallPath: string | null;
 }
 
@@ -17,6 +24,8 @@ export interface ClassicApp {
   name: string;
   appUserModelId: string;
   targetPath: string;
+  targetArguments: string;
+  startMenuLink?: string;
 }
 
 export interface Image {
@@ -96,7 +105,7 @@ async function findImages(
       trimValues: true,
     });
   } catch (err) {
-    console.log('unable to parse manifest for', appUserModelId, err);
+    console.error('unable to parse manifest for', appUserModelId, err);
     return;
   }
 
@@ -109,7 +118,6 @@ async function findImages(
 
   if (specificApp) {
     const visuals = specificApp['uap:VisualElements'];
-
     return {
       backgroundColor: visuals['@BackgroundColor'],
       icon: await findImageVariants(visuals['@Square44x44Logo'], packagePath),
@@ -182,6 +190,43 @@ async function findImageVariants(baseImagePath: string, packagePath: string) {
   return images;
 }
 
+const GLOBAL_START = resolvePath(
+  '%ProgramData%\\Microsoft\\Windows\\Start Menu\\Programs'
+);
+const USER_START = resolvePath(
+  '%AppData%\\Microsoft\\Windows\\Start Menu\\Programs'
+);
+
+async function attachStartMenuLinks(apps: App[]) {
+  const globalStartMenuFiles = await readDirRecursive(GLOBAL_START);
+  const userStartMenuFiles = await readDirRecursive(USER_START);
+
+  const links: string[] = [
+    ...globalStartMenuFiles,
+    ...userStartMenuFiles,
+  ].filter((shortcut) => {
+    return shortcut.endsWith('.lnk');
+  });
+
+  let parsedLinks;
+
+  try {
+    parsedLinks = await readLinks(links);
+  } catch (err) {
+    console.error('unable to read links for classic apps', err);
+    return;
+  }
+
+  for (const app of apps) {
+    if (app.type === 'classic') {
+      const link = parsedLinks.get(app.targetPath + ' ' + app.targetArguments);
+      if (link) {
+        app.startMenuLink = link;
+      }
+    }
+  }
+}
+
 /**
  * Get all apps in the Start Menu
  */
@@ -208,7 +253,8 @@ export async function getApps() {
         type: 'classic',
         name: startApp.Name,
         appUserModelId: startApp.AppUserModelID,
-        targetPath: startApp.TargetParsingPath!,
+        targetPath: startApp.TargetParsingPath ?? '',
+        targetArguments: startApp.TargetArguments ?? '',
       };
     }
   });
@@ -220,6 +266,8 @@ export async function getApps() {
   });
 
   await Promise.all(addImages);
+
+  await attachStartMenuLinks(apps);
 
   return apps;
 }
