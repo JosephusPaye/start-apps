@@ -1,3 +1,5 @@
 dist
 node_modules
 test/cached-icons
+test/apps.html
+test/apps.json
