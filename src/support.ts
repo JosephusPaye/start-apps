@@ -7,7 +7,9 @@ const readDirMemory = new Map<string, fs.Dirent[]>();
 /**
  * List the files and folders in a directory
  */
-export async function readDir(directory: string) {
+export async function readDir(directory: string, onError = (error: any) => {
+  console.error('unable to read files in directory', directory, error);
+}) {
   const remembered = readDirMemory.get(directory);
 
   if (remembered) {
@@ -23,7 +25,7 @@ export async function readDir(directory: string) {
 
     readDirMemory.set(directory, entries);
   } catch (err) {
-    console.error('unable to read files in directory', directory, err);
+    onError(err);
   }
 
   return entries;
@@ -138,7 +140,7 @@ export async function readLinks(links: string[]) {
   const map = new Map<string, string>();
 
   const commands = links.map((link) => {
-    return `(New-Object -COM WScript.Shell).CreateShortcut('${link}') | Select-Object -Property FullName,Arguments,TargetPath | ConvertTo-Json`;
+    return `(New-Object -COM WScript.Shell).CreateShortcut('${escapePowershellSingleQuotes(link)}') | Select-Object -Property FullName,Arguments,TargetPath | ConvertTo-Json`;
   });
 
   const output = await powershell(commands.join("; Write-Host ','; "));
@@ -153,4 +155,15 @@ export async function readLinks(links: string[]) {
   });
 
   return map;
+}
+
+/**
+ * Replace all single quotes (') with '' in the given string.
+ */
+function escapePowershellSingleQuotes(string: string) {
+  return string.replace(/'/g, () => {
+    // Double single quotes are used for a literal ' in single quoted strings in Powershell.
+    // See https://stackoverflow.com/a/11231504/5800506
+    return `''`;
+  });
 }

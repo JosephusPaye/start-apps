@@ -2,6 +2,18 @@
 # yarn lockfile v1
 
 
+"@josephuspaye/default-browser-win@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@josephuspaye/default-browser-win/-/default-browser-win-0.1.1.tgz#1e070e931e3c53430f29cac9d4dc4284fda6c6fc"
+  integrity sha512-ryVp9l51cz2sT4kFTb8qGYYaWAGIj5tf6yipd7fCczi4VYp9w/0uWUC4aa005iNUobaAHx+mnXabQLEsw3idbw==
+  dependencies:
+    "@josephuspaye/powershell" "^0.2.0"
+
+"@josephuspaye/powershell@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@josephuspaye/powershell/-/powershell-0.2.0.tgz#f747f535d1424c0d457ac8a4e32f353c93c956fd"
+  integrity sha512-6S6rp2mrYBv39bmqLA0R5h9ckU/HXYOA8CyMtf+5RHtrY3eO9XPu5POpeJnaUjhhVJ56S10STpYucZfPMqf3VQ==
+
 "@types/node@^14.14.10":
   version "14.14.10"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.10.tgz#5958a82e41863cfc71f2307b3748e3491ba03785"

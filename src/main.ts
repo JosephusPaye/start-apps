@@ -117,15 +117,40 @@ async function findImages(
   );
 
   if (specificApp) {
-    const visuals = specificApp['uap:VisualElements'];
-    return {
-      backgroundColor: visuals['@BackgroundColor'],
-      icon: await findImageVariants(visuals['@Square44x44Logo'], packagePath),
-      tile: await findImageVariants(visuals['@Square150x150Logo'], packagePath),
-    };
-  } else {
-    return undefined;
+    // The icon and background color are usually provided as attributes on the <uap:VisualElements> element
+    const uapVisuals = specificApp['uap:VisualElements'];
+    if (uapVisuals) {
+      return {
+        backgroundColor: uapVisuals['@BackgroundColor'],
+        icon: await findImageVariants(uapVisuals['@Square44x44Logo'] ?? uapVisuals['@Square30x30Logo'], packagePath),
+        tile: await findImageVariants(uapVisuals['@Square150x150Logo'], packagePath),
+      }
+    }
+
+    // But they can sometimes be provided as attributes on the <m2:VisualElements> element
+    // E.g. HP Scan and Capture
+    const m2Visuals = specificApp['m2:VisualElements'];
+    if (m2Visuals) {
+      return {
+        backgroundColor: m2Visuals['@BackgroundColor'],
+        icon: await findImageVariants(m2Visuals['@Square44x44Logo'] ?? m2Visuals['@Square30x30Logo'], packagePath),
+        tile: await findImageVariants(m2Visuals['@Square150x150Logo'], packagePath),
+      }
+    }
+
+    // Or as attributes on the <VisualElements> element
+    // E.g. Xbox One SmartGlass
+    const visuals = specificApp['VisualElements'];
+    if (visuals) {
+      return {
+        backgroundColor: visuals['@BackgroundColor'],
+        icon: await findImageVariants(visuals['@Logo'] ?? visuals['@SmallLOgo'], packagePath),
+        tile: visuals.DefaultTile ? await findImageVariants(visuals.DefaultTile['@WideLogo'], packagePath) : {},
+      }
+    }
   }
+
+  return undefined;
 }
 
 const imageScaleRegex = /scale-(\d+)/i;
@@ -139,12 +164,13 @@ async function findImageVariants(baseImagePath: string, packagePath: string) {
   const { dir: baseImageDir, name: baseImageName } = path.parse(baseImagePath);
   const assetsDirectory = path.join(packagePath, baseImageDir);
 
-  const files = await readDir(assetsDirectory);
+  // const files = await readDir(assetsDirectory);
+  const files = await readDir(assetsDirectory, () => {});
 
   const matchingImages = files
     // Remove files that don't match the base image
     .filter((file) => {
-      return file.isFile && file.name.startsWith(baseImageName);
+      return file.isFile && file.name.toLowerCase().startsWith(baseImageName.toLowerCase());
     })
     // Add full path, scale, and contrast information
     .map((file) => {
