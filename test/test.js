@@ -15,16 +15,22 @@ function resolveStoreAppIcon(app) {
   const icon = {
     path: '',
     backgroundColor: '',
-  }
+  };
 
-  icon.backgroundColor = app?.packageImages?.backgroundColor ?? systemAccentColor;
+  icon.backgroundColor =
+    app?.packageImages?.backgroundColor ?? systemAccentColor;
 
   if (icon.backgroundColor === 'transparent') {
     icon.backgroundColor = systemAccentColor;
   }
 
-  icon.path = app?.packageImages?.icon?.default ?? app?.packageImages?.icon?.onBlack ?? app?.packageImages?.icon?.onWhite
-    ?? app?.packageImages?.tile?.default ?? app?.packageImages?.tile?.onBlack ?? app?.packageImages?.tile?.onWhite;
+  icon.path =
+    app?.packageImages?.icon?.default ??
+    app?.packageImages?.icon?.onBlack ??
+    app?.packageImages?.icon?.onWhite ??
+    app?.packageImages?.tile?.default ??
+    app?.packageImages?.tile?.onBlack ??
+    app?.packageImages?.tile?.onWhite;
 
   if (icon.path) {
     icon.path = posixPath(icon.path);
@@ -44,7 +50,7 @@ function hashCode(string) {
 
   for (let i = 0; i < string.length; i++) {
     let char = string.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash |= 0; // Convert to 32bit integer
   }
 
@@ -79,7 +85,7 @@ async function cacheClassicAppIcon(targetPath) {
     // TODO: think of a better way to convert the target path to a file name
     const iconFileName = hashCode(targetPath) + '.png'; // String(Math.random() * 1000000).slice(0, 6) + '.png';
 
-    const iconFilePath = path.join(__dirname, 'cached-icons', iconFileName);
+    const iconFilePath = path.join(__dirname, 'cached-icons', iconFileName); // TODO: ensure the cached-icons directory exists
 
     await fs.promises.writeFile(iconFilePath, imageBuffer);
 
@@ -95,7 +101,10 @@ async function cacheClassicAppIcon(targetPath) {
 let defaultBrowser;
 let urlRegex = /(^https?:\/\/)|(\.url$)/i;
 
-async function resolveClassicAppIcon(app, options = { useDefaultBrowserIconForUrls: false }) {
+async function resolveClassicAppIcon(
+  app,
+  options = { useDefaultBrowserIconForUrls: false }
+) {
   let targetPath = app.startMenuLink ?? app.targetPath;
 
   const isUrl = app.targetPath.match(urlRegex) !== null;
@@ -119,7 +128,7 @@ async function resolveClassicAppIcon(app, options = { useDefaultBrowserIconForUr
   const icon = {
     isUrl,
     path: await cacheClassicAppIcon(targetPath),
-  }
+  };
 
   if (icon.path) {
     icon.path = posixPath(icon.path);
@@ -139,12 +148,14 @@ async function getAppList() {
       list.push({
         ...app,
         resolvedIcon: resolveStoreAppIcon(app),
-      })
+      });
     } else if (app.type === 'classic') {
       list.push({
         ...app,
-        resolvedIcon: await resolveClassicAppIcon(app, { useDefaultBrowserIconForUrls: false  }),
-      })
+        resolvedIcon: await resolveClassicAppIcon(app, {
+          useDefaultBrowserIconForUrls: true,
+        }),
+      });
     }
   }
 
@@ -153,27 +164,27 @@ async function getAppList() {
 
 async function main() {
   const apps = await getAppList();
-  // const appsHtml = [];
+  const appsHtml = [];
 
-  // for (const app of apps) {
-  //   if (app.type === 'store') {
-  //     appsHtml.push(`
-  //       <div class="app">
-  //         <div class="icon" style="background-color: ${app.resolvedIcon.backgroundColor}; background-image: url('file:///${app.resolvedIcon.path}')"></div>
-  //         <div>${app.name}</div>
-  //       </div>
-  //     `)
-  //   } else if (app.type === 'classic') {
-  //     appsHtml.push(`
-  //       <div class="app">
-  //         <div class="icon" style="background-color: transparent; background-image: url('file:///${app.resolvedIcon.path}')"></div>
-  //         <div>${app.name}</div>
-  //       </div>
-  //     `)
-  //   }
-  // }
+  for (const app of apps) {
+    if (app.type === 'store') {
+      appsHtml.push(`
+        <div class="app">
+          <div class="icon" style="background-color: ${app.resolvedIcon.backgroundColor}; background-image: url('file:///${app.resolvedIcon.path}')"></div>
+          <div>${app.name}</div>
+        </div>
+      `);
+    } else if (app.type === 'classic') {
+      appsHtml.push(`
+        <div class="app">
+          <div class="icon" style="background-color: transparent; background-image: url('file:///${app.resolvedIcon.path}')"></div>
+          <div>${app.name}</div>
+        </div>
+      `);
+    }
+  }
 
-/*  const htmlFile = `
+  const htmlFile = `
     <html>
     <head>
       <title>Apps</title>
@@ -192,10 +203,10 @@ async function main() {
       <script>window.apps = ${JSON.stringify(apps)}</script>
     </body>
     </html>
-  `.trim();*/
+  `.trim();
 
-  // await fs.promises.writeFile('apps.html', htmlFile);
-  // await fs.promises.writeFile('apps.json', JSON.stringify(apps, null, '  '));
+  await fs.promises.writeFile('apps.html', htmlFile);
+  await fs.promises.writeFile('apps.json', JSON.stringify(apps, null, '  '));
 }
 
 main();
